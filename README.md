@@ -449,18 +449,14 @@ A demonstration video showcasing the application's features and capabilities:
 
 <div align="center">
 
-<a href="https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4?raw=true" target="_blank">
-  <img src="screenshots/Screenshot%20(8).png" alt="Demo Video - Click to Play" style="max-width:800px; width:100%; border: 2px solid #0366d6; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
-  <div style="text-align: center; margin-top: 10px;">
-    <span style="background: #0366d6; color: white; padding: 8px 16px; border-radius: 4px; font-weight: bold;">▶️ Click to Play Video</span>
-  </div>
-</a>
+<video width="100%" style="max-width:800px; border: 2px solid #0366d6; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" controls preload="metadata">
+  <source src="https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4" type="video/mp4">
+  Your browser does not support the video tag. <a href="https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4">Download the video</a> instead.
+</video>
 
 </div>
 
-**Direct Video Player Link:** [Open Video Player](https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4?raw=true)
-
-> **Note:** Clicking the image or link above will open the video in your browser's native video player where you can play it directly without downloading. The video streams from GitHub's servers.
+> **Note:** Click the play button above to watch the video. The video streams directly from GitHub's servers and plays inline without downloading.
 
 The recording demonstrates:
 
