@@ -291,14 +291,6 @@ Input Text → Preprocessing → Feature Extraction → ML Processing → Evalua
 - Vocabulary management: Dynamic vocabulary building with frequency thresholds
 
 
-## Technology Stack
-
-**Machine Learning and NLP**: scikit-learn (TF-IDF vectorization, sparse matrix operations), sentence-transformers (Sentence-BERT embeddings), numpy (vectorized operations), NLTK (tokenization, stopword removal, lemmatization), spaCy (dependency parsing, named entity recognition), textstat (readability metrics), plotly (data visualization), pandas (data manipulation)
-
-**LLM Integration**: Groq SDK (high-performance inference API), LangChain (framework abstraction), CTransformers (local model inference with GGML/GGUF)
-
-**Application Framework**: FastAPI (REST API), Streamlit (web interface), SQLAlchemy (database ORM), Pydantic (data validation)
-
 ## Installation and Setup
 
 ### Prerequisites
@@ -330,13 +322,6 @@ Install project dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
-If using LangChain, install the community package for local model support:
-
-```bash
-pip install langchain-community
-```
-
 Download required NLP models:
 
 ```bash
@@ -404,44 +389,6 @@ streamlit run main.py
 ```
 
 The interface will be available at `http://localhost:8501` with options for article generation, text analysis, and document export.
-
-### REST API Server
-
-Start the FastAPI server:
-
-```bash
-python api_server.py
-```
-
-Or using uvicorn directly:
-
-```bash
-uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-The API will be available at `http://localhost:8000` with interactive documentation at `http://localhost:8000/docs`.
-
-### API Usage Examples
-
-Generate an article:
-
-```bash
-curl -X POST "http://localhost:8000/api/v1/articles/generate" \
-  -H "Content-Type: application/json" \
-  -d '{"topic": "Machine Learning in Production", "word_limit": 1000}'
-```
-
-List generated articles with pagination:
-
-```bash
-curl "http://localhost:8000/api/v1/articles?limit=10&offset=0"
-```
-
-Extract keywords from text:
-
-```bash
-curl "http://localhost:8000/api/v1/keywords?text=Your text here&top_n=10"
-```
 
 ## Demo Recording
 
