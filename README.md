@@ -449,14 +449,13 @@ A demonstration video showcasing the application's features and capabilities:
 
 <div align="center">
 
-<video width="100%" style="max-width:800px; border: 2px solid #0366d6; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" controls preload="metadata">
-  <source src="https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4" type="video/mp4">
-  Your browser does not support the video tag. <a href="https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4">Download the video</a> instead.
-</video>
+### 🎥 [Click here to watch the demo video](https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4)
+
+[![Watch Demo Video](https://img.shields.io/badge/▶️-Watch%20Demo%20Video-0366d6?style=for-the-badge)](https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4)
 
 </div>
 
-> **Note:** Click the play button above to watch the video. The video streams directly from GitHub's servers and plays inline without downloading.
+> **Note:** Click the link or button above to open the video in GitHub's built-in player. The video will stream directly and play inline without requiring a download.
 
 The recording demonstrates:
 
