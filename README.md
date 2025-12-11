@@ -447,15 +447,11 @@ curl "http://localhost:8000/api/v1/keywords?text=Your text here&top_n=10"
 
 A demonstration video showcasing the application's features and capabilities:
 
-<video width="800" controls>
-  <source src="Article_forge_recording.mp4" type="video/mp4">
-  Your browser does not support the video tag. [Download the video](Article_forge_recording.mp4)
-</video>
+[![Demo Video](https://img.shields.io/badge/📹-Watch%20Demo%20Video-red?style=for-the-badge)](https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4)
 
-**Note:** After pushing to GitHub, you can also use the GitHub asset URL format:
-```
-https://github.com/YOUR_USERNAME/YOUR_REPO/raw/main/Article_forge_recording.mp4
-```
+**Direct Video Link:** [Article_forge_recording.mp4](https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4)
+
+> **Note:** Click the badge above or the direct link to view/download the demo video. GitHub doesn't support inline video playback in README files, so the video will download or open in your browser's video player.
 
 The recording demonstrates:
 
