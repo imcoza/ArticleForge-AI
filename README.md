@@ -396,13 +396,14 @@ A demonstration video showcasing the application's features and capabilities:
 
 <div align="center">
 
-### 🎥 [Click here to watch the demo video](./Article_forge_recording.mp4)
-
-[![Watch Demo Video](https://img.shields.io/badge/▶️-Watch%20Demo%20Video-0366d6?style=for-the-badge)](./Article_forge_recording.mp4)
+<video width="800" controls>
+  <source src="./Article_forge_recording.mp4" type="video/mp4">
+  Your browser does not support the video tag. [Click here to download the video](./Article_forge_recording.mp4)
+</video>
 
 </div>
 
-> **Note:** Click the link or button above to watch the demo video. On GitHub, it will open in the built-in player. Locally, it will open in your default video player.
+> **Note:** The video is embedded above. If it doesn't play in your browser, you can [download it directly](./Article_forge_recording.mp4).
 
 The recording demonstrates:
 
