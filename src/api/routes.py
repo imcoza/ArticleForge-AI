@@ -87,12 +87,29 @@ async def generate_article(
         generated_text = article_result['text']
         actual_word_count = article_result.get('word_count', len(generated_text.split()))
         
+        # Enforce strict word limit - truncate if necessary
+        if actual_word_count > word_limit:
+            words = generated_text.split()
+            truncated_words = words[:word_limit]
+            generated_text = ' '.join(truncated_words)
+            # Ensure it ends properly at a sentence boundary
+            if generated_text and generated_text[-1] not in '.!?':
+                last_period = generated_text.rfind('.')
+                last_exclamation = generated_text.rfind('!')
+                last_question = generated_text.rfind('?')
+                last_sentence_end = max(last_period, last_exclamation, last_question)
+                if last_sentence_end > len(generated_text) * 0.8:  # Only if we keep at least 80%
+                    generated_text = generated_text[:last_sentence_end + 1]
+                else:
+                    generated_text = generated_text.rstrip() + '.'
+            actual_word_count = len(generated_text.split())
+        
         # Process text
         processor = TextProcessor()
         cleaned_text = processor.clean_text(generated_text)
         keywords = processor.extract_keywords(cleaned_text, top_n=10)
         
-        # Validate with proper word count range
+        # Validate with proper word count range (strict limit)
         min_acceptable = max(settings.MIN_WORD_COUNT, int(word_limit * 0.8))
         validation = processor.validate_text_quality(cleaned_text, min_words=min_acceptable)
         validation['word_count'] = actual_word_count
@@ -102,11 +119,11 @@ async def generate_article(
         if 'warning' in article_result:
             warnings.append(article_result['warning'])
         
-        max_acceptable = word_limit + 100
+        max_acceptable = word_limit  # Strict limit - no exceeding
         if actual_word_count < min_acceptable:
             warnings.append(f"Article shorter than expected: {actual_word_count} words (target: {word_limit})")
         elif actual_word_count > max_acceptable:
-            warnings.append(f"Article longer than expected: {actual_word_count} words (target: {word_limit})")
+            warnings.append(f"Article was truncated to {actual_word_count} words (limit: {word_limit})")
         
         # Get image if requested (non-blocking, optional)
         image_url = None

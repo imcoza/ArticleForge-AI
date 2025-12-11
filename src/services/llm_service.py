@@ -167,10 +167,28 @@ class LLMService:
             else:
                 text = str(result)
             
-            # Validate local model output
+            # Validate local model output and truncate if necessary
             word_count = len(text.split())
             min_words = max(settings.MIN_WORD_COUNT, int(word_limit * 0.8))
-            max_words = word_limit + 100
+            max_words = word_limit  # Strict limit
+            
+            # Truncate if article exceeds word limit
+            if word_count > word_limit:
+                words = text.split()
+                truncated_words = words[:word_limit]
+                text = ' '.join(truncated_words)
+                # Ensure it ends properly
+                if text and text[-1] not in '.!?':
+                    last_period = text.rfind('.')
+                    last_exclamation = text.rfind('!')
+                    last_question = text.rfind('?')
+                    last_sentence_end = max(last_period, last_exclamation, last_question)
+                    if last_sentence_end > len(text) * 0.8:
+                        text = text[:last_sentence_end + 1]
+                    else:
+                        text = text.rstrip() + '.'
+                word_count = len(text.split())
+                logger.info(f"Article truncated to {word_count} words (was {len(words)} words, limit: {word_limit})")
             
             validation = self._validate_article_completeness(text, word_count, min_words, max_words)
             
@@ -218,31 +236,23 @@ class LLMService:
             Dictionary with generated text and metadata
         """
         min_words = max(settings.MIN_WORD_COUNT, int(word_limit * 0.8))
-        max_words = word_limit + 100  # Allow some tolerance
+        max_words = word_limit  # Strict limit - no exceeding
+        
+        # Calculate initial max tokens ONCE (outside loop) - use very generous estimate
+        # Estimate: 1 token ≈ 0.75 words, but use 6.0x multiplier for safety
+        # This ensures we have plenty of room and avoid truncation
+        # For Groq models, we need more tokens due to their tokenization
+        initial_estimated_tokens = int(word_limit * 6.0)  # Very generous: 6 tokens per word
+        max_tokens = min(initial_estimated_tokens, 16384)  # Cap at safe Groq limit
+        
+        # Build prompt once (outside loop)
+        prompt = self._get_prompt_template(word_limit).format(user_input=topic)
+        
+        logger.info(f"Token calculation: word_limit={word_limit}, initial_max_completion_tokens={max_tokens}")
         
         for attempt in range(max_retries):
             try:
-                logger.info(f"Generating article for topic: {topic} using Groq API (attempt {attempt + 1}/{max_retries})")
-                
-                # Build prompt
-                prompt = self._get_prompt_template(word_limit).format(user_input=topic)
-                
-                # Calculate max tokens for the response
-                # Estimate: 1 token ≈ 0.75 words for English text
-                # Prompt is now concise (~50 tokens), so we focus on response tokens
-                # Add buffer: word_limit * 1.5 tokens for the article content
-                # Then add extra buffer for safety and model variations
-                estimated_response_tokens = int(word_limit * 1.5)  # Base estimate
-                prompt_tokens_estimate = 100  # Concise prompt uses ~50-100 tokens
-                safety_buffer = 500  # Extra buffer for model variations
-                
-                max_tokens = min(
-                    estimated_response_tokens + prompt_tokens_estimate + safety_buffer,
-                    32768  # Groq model limit
-                )
-                
-                logger.debug(f"Token calculation: word_limit={word_limit}, max_tokens={max_tokens}, "
-                           f"estimated_response={estimated_response_tokens}")
+                logger.info(f"Generating article for topic: {topic} using Groq API (attempt {attempt + 1}/{max_retries}, max_tokens={max_tokens})")
                 
                 # Create completion
                 try:
@@ -292,15 +302,21 @@ class LLMService:
                     # If we have some content but it was truncated, increase token limit and retry
                     if attempt < max_retries - 1:
                         # Significantly increase token limit for next attempt
-                        # Use a more aggressive multiplier to ensure completion
-                        new_estimated = int(word_limit * 2.0)  # 2 tokens per word
-                        new_max_tokens = min(new_estimated + 1000, 32768)  # Add buffer, cap at model limit
+                        # Use a very generous multiplier to ensure completion
+                        old_max = max_tokens
+                        # Increase by 75% each retry, or use 8x word_limit, whichever is higher (up to 16384)
+                        multiplier_based = int(word_limit * 8.0)  # 8 tokens per word for retry
+                        percentage_based = int(max_tokens * 1.75)  # 75% increase
+                        new_max_tokens = min(max(multiplier_based, percentage_based), 16384)
                         if new_max_tokens > max_tokens:
                             max_tokens = new_max_tokens
-                            logger.info(f"Increasing max_tokens from {max_tokens - (new_max_tokens - max_tokens)} to {max_tokens} for retry...")
+                            logger.info(f"Increasing max_completion_tokens from {old_max} to {max_tokens} for retry (word_limit: {word_limit})...")
                             import time
                             time.sleep(1)  # Brief delay before retry
-                            continue
+                            continue  # This will use the updated max_tokens in the next iteration
+                        else:
+                            # Already at max, try with what we have
+                            logger.warning(f"Already at max token limit ({max_tokens}), cannot increase further")
                     
                     # If we have truncated content, use it with a warning
                     if text and len(text.strip()) > 100:
@@ -338,8 +354,28 @@ class LLMService:
                         'error': f'Empty response from Groq API after {max_retries} attempts. Finish reason: {finish_reason}'
                     }
                 
-                # Validate the generated article
+                # Validate and truncate if necessary to enforce strict word limit
                 word_count = len(text.split())
+                
+                # Truncate if article exceeds word limit
+                if word_count > word_limit:
+                    words = text.split()
+                    truncated_words = words[:word_limit]
+                    text = ' '.join(truncated_words)
+                    # Ensure it ends properly
+                    if text and text[-1] not in '.!?':
+                        # Try to end at last sentence
+                        last_period = text.rfind('.')
+                        last_exclamation = text.rfind('!')
+                        last_question = text.rfind('?')
+                        last_sentence_end = max(last_period, last_exclamation, last_question)
+                        if last_sentence_end > len(text) * 0.8:  # Only if we keep at least 80%
+                            text = text[:last_sentence_end + 1]
+                        else:
+                            text = text.rstrip() + '.'
+                    word_count = len(text.split())
+                    logger.info(f"Article truncated to {word_count} words (was {len(words)} words, limit: {word_limit})")
+                
                 is_complete = self._validate_article_completeness(text, word_count, min_words, max_words)
                 
                 if is_complete['valid']:
@@ -494,15 +530,14 @@ class LLMService:
         min_words = max(settings.MIN_WORD_COUNT, int(word_limit * 0.8))  # At least 80% of target
         
         # Concise prompt to save tokens - essential instructions only
-        return f"""Write a complete, professional article on: {{user_input}}
+        return f"""Write a professional article on: {{user_input}}
 
 Requirements:
-- Target: {word_limit} words (range: {min_words}-{word_limit + 50})
-- Structure: Introduction, body paragraphs, conclusion
-- Complete the article - do not cut off mid-sentence
-- Use clear, engaging language with proper grammar
-- Do NOT include author name, "by [name]", date, or publication metadata
-- Start directly with the article content
+- Exactly {word_limit} words (max {word_limit}, min {min_words})
+- Structure: intro, body, conclusion
+- Complete sentences only
+- No author/date metadata
+- Start with article content
 
 Article:"""
 

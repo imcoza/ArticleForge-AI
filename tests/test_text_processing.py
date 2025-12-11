@@ -37,9 +37,9 @@ class TestTextProcessor:
         text = "This is a simple sentence. It has multiple sentences. Each sentence is easy to read."
         metrics = processor.calculate_readability_metrics(text)
         
-        assert 'flesch_reading_ease' in metrics
         assert 'word_count' in metrics
         assert 'sentence_count' in metrics
+        assert 'avg_sentence_length' in metrics
         assert metrics['word_count'] > 0
         assert metrics['sentence_count'] > 0
     

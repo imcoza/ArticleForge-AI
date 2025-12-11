@@ -10,7 +10,12 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import WordNetLemmatizer
-from textstat import flesch_reading_ease, flesch_kincaid_grade, automated_readability_index
+try:
+    from textstat import automated_readability_index
+    TEXTSTAT_AVAILABLE = True
+except ImportError:
+    TEXTSTAT_AVAILABLE = False
+    automated_readability_index = None
 from src.utils.logger import logger
 
 # Try to import spaCy, but handle import errors gracefully
@@ -164,14 +169,20 @@ class TextProcessor:
         Returns:
             Dictionary with readability metrics
         """
-        return {
-            'flesch_reading_ease': flesch_reading_ease(text),
-            'flesch_kincaid_grade': flesch_kincaid_grade(text),
-            'automated_readability_index': automated_readability_index(text),
+        metrics = {
             'word_count': len(text.split()),
             'sentence_count': len(sent_tokenize(text)),
             'avg_sentence_length': len(text.split()) / max(len(sent_tokenize(text)), 1)
         }
+        
+        # Add automated readability index if available
+        if TEXTSTAT_AVAILABLE and automated_readability_index:
+            try:
+                metrics['automated_readability_index'] = automated_readability_index(text)
+            except Exception:
+                pass
+        
+        return metrics
     
     @staticmethod
     def extract_entities(text: str) -> List[Dict]:

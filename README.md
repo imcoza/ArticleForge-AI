@@ -1,4 +1,4 @@
-# ArticleForge: ML/NLP Engineering Project
+# ArticleForge
 
 A production-ready natural language processing and machine learning system demonstrating advanced NLP algorithms, proper ML evaluation metrics, and feature engineering capabilities. The project showcases corpus-based TF-IDF calculation, TextRank summarization algorithm, Sentence-BERT embeddings, semantic similarity computation, and comprehensive evaluation using BLEU, ROUGE-L, METEOR, and perplexity metrics. The implementation emphasizes ML/NLP engineering practices with proper algorithm understanding, vector space operations, and quantitative evaluation methodologies.
 
@@ -6,295 +6,298 @@ A production-ready natural language processing and machine learning system demon
 
 This system generates articles from user-provided topics using large language models, with a primary focus on demonstrating machine learning and natural language processing capabilities. The core implementation includes advanced NLP algorithms, proper ML evaluation metrics, feature extraction pipelines, and production-grade text processing workflows.
 
-The project emphasizes ML/NLP engineering skills including corpus-based TF-IDF calculation with mathematical precision, custom TextRank algorithm implementation for extractive summarization, semantic similarity computation using Sentence-BERT embeddings, comprehensive model evaluation using standard metrics (BLEU, ROUGE-L, METEOR, perplexity), and feature engineering for NLP tasks. The implementation demonstrates proper algorithm understanding, vector space operations, graph-based ranking, and ML evaluation practices.
+The implementation demonstrates corpus-based TF-IDF calculation with mathematical precision, custom TextRank algorithm for extractive summarization, semantic similarity computation using Sentence-BERT embeddings, and comprehensive model evaluation using standard metrics (BLEU, ROUGE-L, METEOR, perplexity). The system emphasizes proper algorithm understanding, vector space operations, graph-based ranking, and quantitative ML evaluation practices.
 
-## Screenshots
+## Machine Learning Evaluation Metrics
 
-### NLP Analysis Dashboard
+The system implements comprehensive evaluation metrics for assessing text generation quality and NLP task performance. All metrics are computed in real-time during text analysis.
 
-The application provides comprehensive NLP analysis with interactive visualizations of ML metrics and text processing results.
+### Quick Metrics Reference
 
-![NLP Analysis Dashboard](screenshots/Screenshot%20(8).png)
+| Metric Category | Metrics Count | Key Metrics |
+|----------------|---------------|-------------|
+| **Text Generation** | 9 | BLEU-1/2/3/4, ROUGE-L (P/R/F1), METEOR, Perplexity |
+| **Text Quality** | 7 | Vocabulary Diversity, Word/Sentence Length, Readability Index |
+| **NLP Processing** | 8 | TF-IDF, Semantic Similarity, Sentiment (3 scores), Key Phrases, TextRank |
+| **Total Metrics** | **24** | All metrics computed in real-time during analysis |
 
-*Dashboard displaying TF-IDF keyword extraction with scores, sentiment analysis, advanced text statistics (vocabulary richness: 0.400), and comprehensive NLP metrics with interactive Plotly visualizations.*
+### Text Generation Evaluation Metrics
+
+**BLEU Score (Bilingual Evaluation Understudy)**
+- Variants implemented: BLEU-1, BLEU-2, BLEU-3, BLEU-4
+- Calculation method: N-gram precision with geometric mean
+- Smoothing technique: Method 1 smoothing for zero count handling
+- Range: 0.0 to 1.0 (higher indicates better n-gram overlap with reference)
+- Typical values: 0.2-0.5 for generated articles compared to reference texts
+- Mathematical basis: Geometric mean of n-gram precisions with brevity penalty
+- Implementation: NLTK sentence_bleu with custom smoothing function
+
+**ROUGE-L (Recall-Oriented Understudy for Gisting Evaluation - Longest Common Subsequence)**
+- Components computed: Precision, Recall, F1 Score
+- Algorithm: Dynamic programming LCS computation
+- Time complexity: O(mn) where m and n are sequence lengths
+- Use case: Summarization quality assessment and sequence similarity measurement
+- Range: 0.0 to 1.0 for each component (precision, recall, F1)
+- Implementation: Custom dynamic programming LCS algorithm
+
+**METEOR Score (Metric for Evaluation of Translation with Explicit Ordering)**
+- Features: Synonym matching via WordNet, stemming, word order consideration
+- Range: 0.0 to 1.0 (higher indicates better semantic alignment)
+- Advantages: Handles synonyms and paraphrasing better than BLEU
+- Implementation: NLTK meteor_score with WordNet integration
+- Matching strategy: Exact, stem, synonym, and paraphrase matching
+
+**Perplexity**
+- Formula: exp(-average_log_probability)
+- Model type: Simplified unigram language model
+- Interpretation: Lower values indicate better model fit to the text
+- Range: Typically 10-1000 for natural language (lower is better)
+- Calculation: Based on word frequency distribution in the text
 
 ### Text Quality Metrics
 
-Real-time visualization of text quality metrics and evaluation scores.
+**Vocabulary Diversity**
+- Formula: unique_words / total_words
+- Range: 0.3-0.6 for well-written articles
+- Interpretation: Higher values indicate more diverse vocabulary usage
+- Calculation: Set-based unique word count divided by total word count
 
-![Text Quality Metrics](screenshots/Screenshot%20(9).png)
+**Average Word Length**
+- Calculation: Mean characters per word (excluding punctuation)
+- Purpose: Indicator of text complexity and lexical sophistication
+- Unit: Characters per word
 
-*Comprehensive text quality metrics including vocabulary diversity (0.489), average word length (5.45), average sentence length (25.6), unique words (665), and detailed statistical analysis with normalized visualizations.*
+**Sentence Length Variance**
+- Calculation: Statistical variance of sentence lengths (words per sentence)
+- Purpose: Measures writing style consistency and structural variation
+- Formula: Var(X) = E[(X - μ)²] where X is sentence lengths
 
-## Technical Deep Dive: ML & NLP Implementation
+**Readability Metrics** (computed via textstat library)
+- Automated Readability Index: Alternative complexity measure (0-14+)
 
-This section provides detailed coverage of the machine learning and natural language processing implementation, focusing on algorithm implementation, mathematical foundations, and engineering practices.
+## ML Models and Technical Specifications
 
-The system implements production-grade NLP pipelines using Sentence-BERT embeddings for semantic representation, corpus-based TF-IDF with scikit-learn integration for keyword extraction, custom TextRank algorithm implementation for extractive summarization, and comprehensive evaluation metrics including BLEU, ROUGE-L, METEOR, and perplexity. The implementation demonstrates proper feature engineering, semantic similarity computation using cosine similarity on dense embeddings, graph-based ranking algorithms, and vector space operations.
+### Model Inventory
 
-### 1. Machine Learning Models & Embeddings
+**Sentence Embedding Model**
+- Model name: `all-MiniLM-L6-v2`
+- Architecture: DistilBERT-based transformer with mean pooling
+- Embedding dimensions: 384
+- Model size: ~90MB
+- Library: sentence-transformers
+- Base model: Microsoft MiniLM (6 layers, 384 hidden dimensions)
+- Pooling strategy: Mean pooling over token embeddings
 
-#### 1.1 Sentence Embeddings (Sentence-BERT)
-- **Model**: `all-MiniLM-L6-v2` (sentence-transformers library)
-- **Architecture**: DistilBERT-based transformer with mean pooling
-- **Embedding Dimensions**: 384-dimensional vectors
-- **Purpose**: Semantic text representation for similarity computation and key phrase extraction
-- **Performance Characteristics**:
-  - Inference Speed: ~100-200 sentences/second (CPU)
-  - Memory Footprint: ~90MB model size
-  - Semantic Similarity Accuracy: Spearman correlation > 0.80 on STS benchmark
-- **Implementation**: Direct integration via `sentence-transformers` library with fallback to TF-IDF-based embeddings for environments without GPU support
+**Large Language Model (Primary)**
+- Model name: `openai/gpt-oss-120b`
+- Parameters: 120 billion
+- Provider: Groq API
+- Inference engine: Groq LPU (Language Processing Unit)
+- Context window: 4096 tokens (configurable up to 16384 for completion)
+- Token allocation: Dynamic (6x word_limit multiplier, retry with 8x multiplier)
+- Default temperature: 0.7
+- Default top_p: 0.9
+- Default top_k: 50
 
-#### 1.2 Large Language Model (LLM) Integration
-- **Primary Provider**: Groq API
-  - **Model**: `openai/gpt-oss-120b` (120B parameter model)
-  - **Inference Engine**: Groq's LPU (Language Processing Unit) hardware acceleration
-  - **Token Management**: Dynamic token calculation based on word count targets with safety buffers
-  - **Retry Logic**: Exponential backoff with configurable max retries (default: 3)
-- **Local Fallback**: CTransformers with GGML/GGUF format support
-  - **Default Model**: `TheBloke/Llama-2-7B-Chat-GGML`
-  - **Quantization**: Q8_0 (8-bit quantization for memory efficiency)
-  - **Context Length**: 4096 tokens
+**Large Language Model (Fallback)**
+- Model name: `TheBloke/Llama-2-7B-Chat-GGML`
+- Parameters: 7 billion
+- Format: GGML/GGUF
+- Quantization: Q8_0 (8-bit)
+- Context length: 4096 tokens
+- Library: CTransformers
 
-### 2. Core NLP Algorithms
+**spaCy Model**
+- Model name: `en_core_web_sm`
+- Purpose: Dependency parsing, named entity recognition, noun phrase extraction
+- Language: English
+- Size: Small model variant
 
-#### 2.1 TF-IDF (Term Frequency-Inverse Document Frequency)
-- **Implementation**: Dual-mode TF-IDF processor
-  - **Mode 1**: scikit-learn `TfidfVectorizer` with corpus-based IDF calculation
-  - **Mode 2**: Manual implementation with mathematical precision
-- **Mathematical Formulation**:
-  ```
-  TF(t, d) = (Number of times term t appears in document d) / (Total terms in d)
-  IDF(t, D) = log(Total documents / Number of documents containing term t)
-  TF-IDF(t, d, D) = TF(t, d) × IDF(t, D)
-  ```
-- **Features**:
-  - N-gram support: Unigrams and bigrams (configurable 1-2 word phrases)
-  - Document frequency filtering: `min_df=1`, `max_df=0.95` (removes overly common terms)
-  - Stopword removal: English stopwords from NLTK
+### Complete Metrics Inventory
+
+**Text Generation Evaluation Metrics**
+1. **BLEU-1**: Unigram precision score (0-1, higher = better n-gram match)
+2. **BLEU-2**: Bigram precision score (0-1, higher = better phrase match)
+3. **BLEU-3**: Trigram precision score (0-1, higher = better context match)
+4. **BLEU-4**: 4-gram precision score (0-1, higher = better sequence match)
+5. **ROUGE-L Precision**: LCS-based precision (0-1, measures overlap quality)
+6. **ROUGE-L Recall**: LCS-based recall (0-1, measures coverage)
+7. **ROUGE-L F1**: Harmonic mean of precision and recall (0-1, balanced metric)
+8. **METEOR**: Semantic alignment score with synonym matching (0-1, higher = better semantic match)
+9. **Perplexity**: Language model uncertainty measure (lower = better fit, typically 10-1000)
+
+**Text Quality Metrics**
+1. **Vocabulary Diversity**: Ratio of unique to total words (0-1, 0.3-0.6 typical for articles)
+2. **Average Word Length**: Mean characters per word (indicates lexical complexity)
+3. **Average Sentence Length**: Mean words per sentence (indicates structural complexity)
+4. **Sentence Length Variance**: Statistical variance of sentence lengths (measures style consistency)
+5. **Unique Words**: Count of distinct words (vocabulary richness indicator)
+6. **Total Words**: Total word count in document
+7. **Automated Readability Index**: Text complexity score (0-14+, via textstat)
+
+**NLP Processing Metrics**
+1. **TF-IDF Score**: Term frequency-inverse document frequency (higher = more important term)
+2. **Semantic Similarity**: Cosine similarity on Sentence-BERT embeddings (0-1, higher = more similar)
+3. **Sentiment Positive Score**: Positive sentiment probability (0-1, rule-based lexicon)
+4. **Sentiment Negative Score**: Negative sentiment probability (0-1, rule-based lexicon)
+5. **Sentiment Neutral Score**: Neutral sentiment probability (0-1, rule-based lexicon)
+6. **Key Phrase Score**: Frequency × phrase length (higher = more significant phrase)
+7. **Word Frequency**: Token occurrence count (for keyword extraction)
+8. **TextRank Score**: Sentence importance via PageRank algorithm (0-1, higher = more central)
+
+### Algorithm Specifications
+
+**TF-IDF Vectorization**
+- Implementation: scikit-learn TfidfVectorizer + manual calculation
+- N-grams: Unigrams (1-gram), Bigrams (2-gram)
+- Document frequency: min_df=1, max_df=0.95
   - Vocabulary size: Up to 10,000 features
-- **Performance Metrics**:
-  - Processing Speed: ~5,000 words/second for single document
-  - Corpus Processing: Linear scaling with document count
-  - Memory Efficiency: Sparse matrix representation for large vocabularies
+- Matrix format: Sparse (scipy.sparse)
+- IDF calculation: Corpus-based log scaling
 
-#### 2.2 TextRank Algorithm (Graph-Based Summarization)
-- **Algorithm Type**: Extractive summarization using PageRank-inspired graph ranking
-- **Mathematical Foundation**:
-  - Sentence similarity matrix construction using cosine similarity on word frequency vectors
-  - PageRank algorithm with damping factor (α = 0.85)
-  - Iterative convergence: Maximum 100 iterations or until convergence (ε < 1e-6)
-- **Implementation Details**:
-  - Sentence vectorization: Word frequency vectors with stopword removal
-  - Similarity computation: Cosine similarity between sentence pairs
-  - Graph construction: Weighted undirected graph where nodes = sentences, edges = similarity scores
-  - Ranking: Power iteration method for PageRank computation
-- **Performance**:
-  - Time Complexity: O(n²) for similarity matrix, O(n² × k) for PageRank (n = sentences, k = iterations)
-  - Typical Runtime: <1 second for documents up to 100 sentences
-  - Summary Quality: ROUGE-L F1 score typically 0.35-0.45 on news articles
+**TextRank Algorithm**
+- Algorithm: PageRank-inspired graph ranking
+- Damping factor (α): 0.85
+- Max iterations: 100
+- Convergence threshold: ε < 1e-6
+- Similarity metric: Cosine similarity on word frequency vectors
+- Graph type: Weighted undirected
+- Time complexity: O(n²) similarity matrix, O(n²×k) PageRank
 
-#### 2.3 Semantic Similarity Computation
-- **Method**: Cosine similarity on sentence embeddings
-- **Embedding Model**: Sentence-BERT (`all-MiniLM-L6-v2`)
-- **Similarity Formula**:
-  ```
-  similarity(A, B) = (A · B) / (||A|| × ||B||)
-  ```
-- **Use Cases**:
-  - Key phrase extraction via semantic clustering
-  - Similar sentence retrieval (top-k search)
-  - Document deduplication
-- **Performance**:
-  - Embedding Generation: ~100-200 sentences/second
-  - Similarity Computation: O(n) for pairwise, O(n²) for all-pairs
-  - Accuracy: Spearman correlation >0.80 on semantic similarity benchmarks
+**Semantic Similarity**
+- Method: Cosine similarity
+- Embedding model: all-MiniLM-L6-v2 (384 dimensions)
+- Formula: similarity(A,B) = (A·B) / (||A|| × ||B||)
+- Computation: NumPy vectorized operations
+- Complexity: O(n) pairwise, O(n²) all-pairs
 
-### 3. Text Classification & Sentiment Analysis
+**Sentiment Classification**
+- Method: Rule-based lexicon matching
+- Dictionaries: Positive/negative word sets (expandable)
+- Neutral calculation: 1 - (positive + negative)
+- Prediction: Argmax of sentiment scores
+- Accuracy: ~70-75% (baseline)
 
-#### 3.1 Sentiment Classification
-- **Current Implementation**: Rule-based classifier with lexicon matching
-- **Features**:
-  - Positive/negative word dictionaries (expandable)
-  - Neutral score calculation: 1 - (positive + negative)
-  - Label prediction: Argmax of sentiment scores
-- **Future Enhancement**: BERT-based fine-tuned sentiment model (planned)
-- **Performance**:
-  - Processing Speed: ~50,000 words/second
-  - Accuracy: ~70-75% on general text (rule-based baseline)
+### Hyperparameters and Configuration
 
-#### 3.2 Text Quality Metrics
-- **Vocabulary Diversity**: Ratio of unique words to total words
-  - Formula: `unique_words / total_words`
-  - Typical Range: 0.3-0.6 for well-written articles
-- **Average Word Length**: Mean characters per word
-  - Indicator of text complexity
-- **Sentence Length Variance**: Statistical variance of sentence lengths
-  - Measures writing style consistency
-- **Readability Metrics** (via `textstat` library):
-  - Flesch Reading Ease: 0-100 scale (higher = easier)
-  - Flesch-Kincaid Grade Level: U.S. school grade equivalent
-  - Automated Readability Index: Alternative complexity measure
+**LLM Generation Parameters**
+- Temperature: 0.7 (default, configurable)
+- Top-p (nucleus sampling): 0.9 (default)
+- Top-k: 50 (default)
+- Max tokens: 1000 (default, dynamic allocation up to 16384)
+- Retry attempts: 3 (default)
+- Token multiplier: 6x word_limit (initial), 8x (retry)
 
-### 4. Evaluation Metrics & Model Assessment
+**TextRank Hyperparameters**
+- Damping factor: 0.85
+- Convergence threshold: 1e-6
+- Maximum iterations: 100
+- Sentence similarity threshold: Cosine similarity on word frequency vectors
 
-#### 4.1 Text Generation Evaluation
-- **BLEU Score**: N-gram precision-based metric
-  - Implemented: BLEU-1, BLEU-2, BLEU-3, BLEU-4
-  - Smoothing: Method 1 smoothing for handling zero counts
-  - Typical Range: 0.2-0.5 for generated articles (vs. reference)
-- **ROUGE-L**: Longest Common Subsequence (LCS) based metric
-  - Components: Precision, Recall, F1 Score
-  - Implementation: Dynamic programming LCS algorithm (O(mn) complexity)
-  - Use Case: Summarization quality assessment
-- **METEOR Score**: Semantic-aware evaluation metric
-  - Features: Synonym matching, stemming, word order consideration
-  - Range: 0-1 (higher = better)
-- **Perplexity**: Language model uncertainty measure
-  - Current: Simplified unigram model
-  - Formula: `exp(-average_log_probability)`
-  - Lower values indicate better model fit
+**TF-IDF Hyperparameters**
+- min_df: 1 (minimum document frequency)
+- max_df: 0.95 (maximum document frequency)
+- ngram_range: (1, 2) (unigrams and bigrams)
+- max_features: 10,000 (vocabulary size limit)
 
-#### 4.2 Performance Benchmarks
+**Embedding Generation Parameters**
+- Batch size: Configurable (default: automatic)
+- Model: all-MiniLM-L6-v2
+- Output dimensions: 384
+- Normalization: L2 normalization for similarity computation
 
-**Text Processing Pipeline Performance** (measured on Intel i7, 16GB RAM):
-- Article Generation (1000 words): 3-5 seconds (Groq API)
-- TF-IDF Keyword Extraction: <100ms for 1000-word document
-- Sentence Embedding Generation: ~50ms for 20 sentences
-- TextRank Summarization: ~200ms for 50-sentence document
-- Full NLP Pipeline: ~1-2 seconds end-to-end
+## Machine Learning Architecture
 
-**Model Accuracy Metrics** (on standard benchmarks):
-- Sentence Similarity (STS Benchmark): Spearman correlation >0.80
-- Keyword Extraction: Top-10 precision ~0.70-0.80 (domain-dependent)
-- TextRank Summarization: ROUGE-L F1 typically 0.35-0.45 on news articles
+The system implements production-grade NLP pipelines using Sentence-BERT embeddings for semantic representation, corpus-based TF-IDF with scikit-learn integration for keyword extraction, custom TextRank algorithm implementation for extractive summarization, and comprehensive evaluation metrics. The implementation demonstrates proper feature engineering, semantic similarity computation using cosine similarity on dense embeddings, graph-based ranking algorithms, and vector space operations.
 
-### 5. Advanced ML Features
 
-#### 5.1 Key Phrase Extraction
-- **Method 1**: Noun phrase extraction using spaCy's dependency parsing
-  - Filters: Minimum 2 words, length >5 characters
-  - Scoring: Frequency × phrase length
-- **Method 2**: Bigram extraction with frequency scoring (fallback)
-- **Output**: Ranked list of (phrase, score) tuples
+### Core NLP Algorithms
 
-#### 5.2 Text Preprocessing Pipeline
-- **Steps**:
-  1. Unicode normalization
-  2. URL and email removal (regex-based)
-  3. Special character filtering (preserves punctuation for readability)
-  4. Whitespace normalization
-  5. Optional stopword removal
-  6. Tokenization (NLTK `word_tokenize`)
-  7. Lemmatization (WordNet lemmatizer)
-- **Performance**: ~10,000 words/second preprocessing throughput
+**TF-IDF Vectorization**
+- Implementation: Dual-mode processor with scikit-learn TfidfVectorizer and manual mathematical implementation
+- Mathematical formulation:
+  - TF(t,d) = count(t,d) / |d|
+  - IDF(t,D) = log(|D| / |{d ∈ D : t ∈ d}|)
+  - TF-IDF(t,d,D) = TF(t,d) × IDF(t,D)
+- Features: N-gram support (unigrams, bigrams), document frequency filtering (min_df=1, max_df=0.95), stopword removal, sparse matrix representation
+- Performance: ~5,000 words/second processing, linear corpus scaling, memory-efficient sparse storage
 
-#### 5.3 Feature Engineering
-- **TF-IDF Vectors**: Sparse matrix representation (scipy.sparse)
-- **Sentence Embeddings**: Dense 384-dimensional vectors (numpy arrays)
-- **N-gram Features**: Configurable unigrams and bigrams
-- **Vocabulary Management**: Dynamic vocabulary building with frequency thresholds
+**TextRank Algorithm**
+- Algorithm: Graph-based extractive summarization using PageRank
+- Mathematical foundation: Sentence similarity matrix via cosine similarity on word frequency vectors, PageRank with damping factor α=0.85, iterative convergence (max 100 iterations, ε<1e-6)
+- Graph structure: Weighted undirected graph (nodes=sentences, edges=similarity scores)
+- Complexity: O(n²) for similarity matrix, O(n²×k) for PageRank where n=sentences, k=iterations
+- Performance: <1 second for documents up to 100 sentences, ROUGE-L F1 typically 0.35-0.45
 
-### 6. ML Pipeline Architecture
+**Semantic Similarity Computation**
+- Method: Cosine similarity on Sentence-BERT embeddings
+- Formula: similarity(A,B) = (A·B) / (||A|| × ||B||)
+- Use cases: Key phrase extraction via semantic clustering, top-k sentence retrieval, document deduplication
+- Performance: ~100-200 sentences/second embedding generation, O(n) pairwise, O(n²) all-pairs computation
+
+### Feature Engineering and Text Processing
+
+**Sentiment Classification**
+- Implementation: Rule-based classifier with lexicon matching
+- Features: Expandable positive/negative word dictionaries, neutral score calculation (1 - (positive + negative)), argmax label prediction
+- Performance: ~50,000 words/second processing, ~70-75% accuracy on general text (baseline)
+
+**Text Preprocessing Pipeline**
+- Steps: Unicode normalization, URL/email removal (regex), special character filtering, whitespace normalization, optional stopword removal, NLTK tokenization, WordNet lemmatization
+- Performance: ~10,000 words/second throughput
+
+**Key Phrase Extraction**
+- Method 1: Noun phrase extraction using spaCy dependency parsing (minimum 2 words, length >5 characters, frequency × phrase length scoring)
+- Method 2: Bigram extraction with frequency scoring (fallback)
+- Output: Ranked list of (phrase, score) tuples
+
+### Performance Benchmarks
+
+**Text Processing Pipeline** (Intel i7, 16GB RAM):
+- Article generation (1000 words): 3-5 seconds (Groq API)
+- TF-IDF keyword extraction: <100ms for 1000-word document
+- Sentence embedding generation: ~50ms for 20 sentences
+- TextRank summarization: ~200ms for 50-sentence document
+- Full NLP pipeline: ~1-2 seconds end-to-end
+
+**Model Accuracy** (standard benchmarks):
+- Sentence similarity (STS Benchmark): Spearman correlation >0.80
+- Keyword extraction: Top-10 precision ~0.70-0.80 (domain-dependent)
+- TextRank summarization: ROUGE-L F1 typically 0.35-0.45 on news articles
+
+### ML Pipeline Architecture
 
 ```
-Input Text
-    ↓
-[Preprocessing] → Tokenization, Cleaning, Normalization
-    ↓
-[Feature Extraction] → TF-IDF / Embeddings / N-grams
-    ↓
-[ML Processing] → Keyword Extraction / Summarization / Sentiment Analysis
-    ↓
-[Evaluation] → Quality Metrics / Similarity Scores
-    ↓
-Output: Structured NLP Results
+Input Text → Preprocessing → Feature Extraction → ML Processing → Evaluation → Output
+                ↓                    ↓                    ↓              ↓
+         Tokenization,        TF-IDF / Embeddings   Keyword Ext.   Quality Metrics
+         Cleaning,            / N-grams             Summarization  Similarity Scores
+         Normalization                              Sentiment
 ```
 
-### 7. Technical Implementation Highlights
+### Implementation Details
 
-- **Vectorization**: scikit-learn `TfidfVectorizer` with sparse matrix optimization
-- **Embedding Generation**: Batch processing for efficiency (configurable batch size)
-- **Similarity Computation**: NumPy-optimized cosine similarity with vectorized operations
-- **Graph Algorithms**: Custom PageRank implementation with convergence detection
-- **Memory Management**: Sparse matrix storage, lazy loading of large models
-- **Error Handling**: Graceful fallbacks at each ML component level
+**Vectorization**: scikit-learn TfidfVectorizer with sparse matrix optimization (scipy.sparse)
+**Embedding Generation**: Batch processing for efficiency with configurable batch size
+**Similarity Computation**: NumPy-optimized cosine similarity with vectorized operations
+**Graph Algorithms**: Custom PageRank implementation with convergence detection (ε<1e-6)
+**Memory Management**: Sparse matrix storage, lazy loading of large models
+**Error Handling**: Graceful fallbacks at each ML component level
 
-### 8. ML/NLP Visualization and Analysis
+**Feature Representations**:
+- TF-IDF vectors: Sparse matrix representation (scipy.sparse)
+- Sentence embeddings: Dense 384-dimensional vectors (numpy arrays)
+- N-gram features: Configurable unigrams and bigrams
+- Vocabulary management: Dynamic vocabulary building with frequency thresholds
 
-The application includes comprehensive visualizations of ML/NLP results using Plotly for interactive data exploration:
-
-- **TF-IDF Keyword Visualization**: Horizontal bar charts displaying top keywords with normalized TF-IDF scores, enabling identification of document-specific important terms based on corpus-based IDF calculation
-- **Text Quality Metrics Dashboard**: Normalized metrics visualization (0-1 scale) showing vocabulary diversity, word length distribution, and sentence variation with statistical analysis
-- **Detailed Statistics Charts**: Bar charts for vocabulary diversity, sentence length analysis, and perplexity measurements demonstrating ML evaluation capabilities
-- **NLP Analysis Panel**: Real-time display of sentiment scores, key phrase extraction results, and advanced text statistics with interactive tooltips
-
-![NLP Analysis Dashboard](screenshots/Screenshot%20(8).png)
-
-*Dashboard displaying TF-IDF keyword extraction with normalized scores, sentiment analysis results, advanced text statistics including vocabulary richness (0.400), and comprehensive NLP metrics with interactive Plotly visualizations demonstrating ML/NLP engineering capabilities.*
-
-![Text Quality Metrics](screenshots/Screenshot%20(9).png)
-
-*Comprehensive text quality metrics visualization including vocabulary diversity (0.489), average word length (5.45), average sentence length (25.6), unique words (665), and detailed statistical analysis with normalized visualizations showing ML evaluation metrics.*
-
-## Core ML/NLP Features
-
-### Advanced Text Processing Pipeline
-
-The NLP pipeline implements production-grade text processing with multiple stages:
-
-**Preprocessing**: Multi-stage text normalization including Unicode normalization, URL and email removal using regex patterns, special character filtering while preserving punctuation, whitespace normalization, configurable stopword removal using NLTK, tokenization with NLTK's word_tokenize, and lemmatization using WordNet lemmatizer. The pipeline processes approximately 10,000 words per second.
-
-**TF-IDF Keyword Extraction**: Corpus-based TF-IDF implementation with dual-mode operation. Supports both scikit-learn TfidfVectorizer integration and manual mathematical calculation. Features include n-gram support (unigrams and bigrams), document frequency filtering (min_df=1, max_df=0.95), stopword removal, and sparse matrix representation for memory efficiency. Processing speed: approximately 5,000 words/second for single documents with linear scaling for corpus processing.
-
-**TextRank Summarization**: Custom implementation of graph-based extractive summarization using PageRank algorithm. Constructs sentence similarity matrix using cosine similarity on word frequency vectors, applies PageRank with damping factor (α=0.85), and uses iterative convergence (max 100 iterations, ε<1e-6). Time complexity: O(n²) for similarity matrix, O(n²×k) for PageRank where n=sentences, k=iterations. Typical runtime: <1 second for documents up to 100 sentences. Summary quality: ROUGE-L F1 typically 0.35-0.45 on news articles.
-
-**Semantic Similarity**: Cosine similarity computation on Sentence-BERT embeddings (384-dimensional vectors). Uses all-MiniLM-L6-v2 model for semantic representation. Embedding generation: ~100-200 sentences/second. Similarity computation: O(n) for pairwise, O(n²) for all-pairs. Accuracy: Spearman correlation >0.80 on semantic similarity benchmarks.
-
-**Sentiment Analysis**: Rule-based classifier with lexicon matching for positive/negative word detection. Features expandable word dictionaries, neutral score calculation (1 - (positive + negative)), and label prediction via argmax. Processing speed: ~50,000 words/second. Accuracy: ~70-75% on general text (rule-based baseline).
-
-**Text Quality Metrics**: Comprehensive quality assessment including vocabulary diversity (unique_words/total_words, typical range 0.3-0.6), average word length (mean characters per word), sentence length variance (statistical variance of sentence lengths), and readability metrics via textstat library (Flesch Reading Ease, Flesch-Kincaid Grade Level, Automated Readability Index).
-
-### Evaluation Metrics and Model Assessment
-
-The system implements comprehensive evaluation metrics for text generation and NLP tasks:
-
-**BLEU Score**: N-gram precision-based metric with implementation for BLEU-1, BLEU-2, BLEU-3, and BLEU-4. Uses Method 1 smoothing for handling zero counts. Typical range: 0.2-0.5 for generated articles compared to reference texts.
-
-**ROUGE-L**: Longest Common Subsequence (LCS) based metric with precision, recall, and F1 score components. Implementation uses dynamic programming LCS algorithm with O(mn) complexity. Primary use case: summarization quality assessment.
-
-**METEOR Score**: Semantic-aware evaluation metric with synonym matching, stemming, and word order consideration. Range: 0-1 (higher indicates better quality).
-
-**Perplexity**: Language model uncertainty measure using simplified unigram model. Formula: exp(-average_log_probability). Lower values indicate better model fit to the text.
-
-**Text Quality Metrics**: Real-time calculation of vocabulary diversity, average word length, sentence length variance, and readability scores. These metrics provide quantitative assessment of generated text quality and linguistic characteristics.
 
 ## Technology Stack
 
-### Machine Learning and NLP Libraries
+**Machine Learning and NLP**: scikit-learn (TF-IDF vectorization, sparse matrix operations), sentence-transformers (Sentence-BERT embeddings), numpy (vectorized operations), NLTK (tokenization, stopword removal, lemmatization), spaCy (dependency parsing, named entity recognition), textstat (readability metrics), plotly (data visualization), pandas (data manipulation)
 
-- **scikit-learn**: TF-IDF vectorization, cosine similarity computation, sparse matrix operations for feature extraction
-- **sentence-transformers**: Sentence-BERT embeddings (all-MiniLM-L6-v2) for semantic representation and similarity computation
-- **numpy**: Vectorized operations for similarity computation, matrix operations, and numerical computations
-- **NLTK**: Natural language processing toolkit for tokenization, stopword removal, lemmatization, and linguistic analysis
-- **spaCy**: Advanced NLP library for text processing, dependency parsing, and named entity recognition
-- **textstat**: Readability metric calculations (Flesch Reading Ease, Flesch-Kincaid Grade Level, Automated Readability Index)
-- **sumy**: TextRank algorithm implementation for extractive summarization
-- **plotly**: Interactive data visualization for ML/NLP metrics and results
-- **pandas**: Data manipulation and analysis for NLP feature engineering
+**LLM Integration**: Groq SDK (high-performance inference API), LangChain (framework abstraction), CTransformers (local model inference with GGML/GGUF)
 
-### LLM Integration
-
-- **Groq SDK**: High-performance LLM inference API client for article generation
-- **LangChain**: LLM framework abstraction for provider-agnostic model integration
-- **CTransformers**: Local model inference engine for offline operation
-
-### Application Framework
-
-- **FastAPI**: REST API framework with automatic OpenAPI documentation
-- **Streamlit**: Interactive web interface for ML/NLP analysis and visualization
-- **SQLAlchemy**: Database ORM for article persistence
-- **Pydantic**: Data validation and settings management
+**Application Framework**: FastAPI (REST API), Streamlit (web interface), SQLAlchemy (database ORM), Pydantic (data validation)
 
 ## Installation and Setup
 
@@ -440,6 +443,60 @@ Extract keywords from text:
 curl "http://localhost:8000/api/v1/keywords?text=Your text here&top_n=10"
 ```
 
+## Demo Recording
+
+A demonstration video showcasing the application's features and capabilities:
+
+<video width="800" controls>
+  <source src="Article_forge_recording.mp4" type="video/mp4">
+  Your browser does not support the video tag. [Download the video](Article_forge_recording.mp4)
+</video>
+
+**Note:** After pushing to GitHub, you can also use the GitHub asset URL format:
+```
+https://github.com/YOUR_USERNAME/YOUR_REPO/raw/main/Article_forge_recording.mp4
+```
+
+The recording demonstrates:
+
+**Article Generation Workflow**
+- Interactive article generation from user-provided topics
+- Real-time word count validation and enforcement
+- LLM integration with Groq API (120B parameter model)
+- Dynamic token allocation and retry mechanisms
+
+**NLP Analysis and Visualization**
+- Quick Metrics Overview Dashboard with normalized scores (0-1 range)
+- Interactive Plotly charts for text quality metrics
+- TF-IDF keyword extraction with corpus-based IDF calculation
+- Sentiment analysis visualization (positive, negative, neutral)
+- Word and sentence length distribution histograms
+- Comprehensive metrics radar chart
+- Perplexity gauge visualization
+
+**Advanced NLP Features**
+- Sentence-BERT embeddings (384-dimensional vectors)
+- Semantic similarity computation using cosine similarity
+- TextRank summarization with graph-based ranking algorithm
+- Key phrase extraction using spaCy dependency parsing
+- Named entity recognition (NER) with entity type classification
+
+**Evaluation Metrics**
+- BLEU score calculation (BLEU-1, BLEU-2, BLEU-3, BLEU-4)
+- ROUGE-L metrics (Precision, Recall, F1 Score)
+- METEOR score with WordNet synonym matching
+- Perplexity computation using unigram language model
+- Vocabulary diversity and text quality metrics
+
+**Technical Implementation Highlights**
+- Corpus-based TF-IDF with scikit-learn integration
+- Sparse matrix optimization for large vocabularies
+- Batch processing for embedding generation
+- Error handling with graceful fallbacks
+- Real-time metric computation and visualization
+
+The recording provides a comprehensive walkthrough of the ML/NLP engineering capabilities, demonstrating production-ready implementations of advanced algorithms and evaluation metrics.
+
 ## Implementation Notes
 
 The system implements error handling with retry logic for LLM inference, graceful degradation when optional components fail, and comprehensive input validation. Performance optimizations include model instance caching, efficient text processing algorithms, and sparse matrix representation for large vocabularies. API keys are stored in environment variables, and all user inputs are validated and sanitized.
@@ -490,33 +547,12 @@ src/
 tests/                 # Test suite including ML/NLP component tests
 ```
 
-## ML/NLP Limitations and Future Enhancements
+## Limitations and Future Enhancements
 
-Current ML/NLP implementation limitations:
+**Current Limitations**: Rule-based sentiment analysis (~70-75% accuracy), extractive-only TextRank summarization, single-document TF-IDF by default, evaluation metrics not used for model selection, no fine-tuning capabilities, English-only processing
 
-- Sentiment analysis uses rule-based approach (accuracy ~70-75%); BERT-based fine-tuning would improve performance
-- TextRank summarization is extractive only; abstractive summarization with sequence-to-sequence models would provide more natural summaries
-- TF-IDF uses single-document mode by default; corpus-based IDF requires manual corpus provision
-- Evaluation metrics are computed but not used for model selection or hyperparameter tuning
-- No model fine-tuning capabilities for domain-specific adaptation
-- Limited to English language processing
-
-Potential ML/NLP enhancements:
-
-- Fine-tune BERT/RoBERTa models for sentiment classification and text classification tasks
-- Implement abstractive summarization using T5 or BART models
-- Add topic modeling using LDA or BERTopic for document clustering
-- Implement word embeddings visualization (t-SNE, UMAP) for semantic analysis
-- Add model comparison framework with A/B testing capabilities
-- Implement hyperparameter tuning for TextRank (damping factor, convergence threshold)
-- Add custom feature engineering for domain-specific tasks
-- Implement model versioning and experiment tracking (MLflow integration)
-- Add multi-language support with language detection and cross-lingual embeddings
-
-## Dependencies
-
-Core ML/NLP dependencies include scikit-learn for TF-IDF vectorization and similarity computation, sentence-transformers for semantic embeddings, numpy for vectorized operations, NLTK and spaCy for text processing, plotly and pandas for data visualization, and sumy for TextRank summarization. See `requirements.txt` for complete dependency list with version constraints.
+**Potential Enhancements**: BERT/RoBERTa fine-tuning for sentiment classification, abstractive summarization (T5/BART), topic modeling (LDA/BERTopic), embedding visualization (t-SNE/UMAP), model comparison framework with A/B testing, hyperparameter tuning for TextRank, MLflow integration for experiment tracking, multi-language support
 
 ## Summary
 
-This project demonstrates production-ready ML and NLP engineering capabilities with proper algorithm implementation, comprehensive evaluation metrics, and feature engineering pipelines. The implementation focuses on demonstrating machine learning and natural language processing skills including corpus-based TF-IDF calculation, graph-based summarization algorithms, semantic similarity computation, and standard ML evaluation practices. The codebase emphasizes ML/NLP engineering practices suitable for applied AI and NLP engineer roles, showcasing algorithm understanding, vector space operations, and quantitative evaluation methodologies.
+This project demonstrates production-ready ML and NLP engineering capabilities with proper algorithm implementation, comprehensive evaluation metrics (BLEU, ROUGE-L, METEOR, perplexity), and feature engineering pipelines. The implementation showcases corpus-based TF-IDF calculation, graph-based summarization algorithms, semantic similarity computation, and standard ML evaluation practices. The codebase emphasizes ML/NLP engineering practices suitable for applied AI and NLP engineer roles, demonstrating algorithm understanding, vector space operations, and quantitative evaluation methodologies.
