@@ -396,14 +396,13 @@ A demonstration video showcasing the application's features and capabilities:
 
 <div align="center">
 
-<video width="800" controls>
-  <source src="./Article_forge_recording.mp4" type="video/mp4">
-  Your browser does not support the video tag. [Click here to download the video](./Article_forge_recording.mp4)
-</video>
+[![ArticleForge AI Demo Video](./Article_forge_recording_thumbnail.jpg)](https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4)
+
+**Click the image above to watch the demo video**
 
 </div>
 
-> **Note:** The video is embedded above. If it doesn't play in your browser, you can [download it directly](./Article_forge_recording.mp4).
+> **Note:** Click the thumbnail image above to watch the demo video. The video will open in your browser's default video player. For best experience, right-click and select "Save As" to download, or use a video player that supports streaming.
 
 The recording demonstrates:
 
