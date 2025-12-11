@@ -449,15 +449,18 @@ A demonstration video showcasing the application's features and capabilities:
 
 <div align="center">
 
-[![Demo Video - Click to Play](screenshots/Screenshot%20(8).png)](https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4)
-
-**▶️ Click the image above to watch the full demo video**
-
-[📥 Direct Video Link](https://github.com/imcoza/ArticleForge-AI/raw/main/Article_forge_recording.mp4) | [📊 View on GitHub](https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4)
+<a href="https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4?raw=true" target="_blank">
+  <img src="screenshots/Screenshot%20(8).png" alt="Demo Video - Click to Play" style="max-width:800px; width:100%; border: 2px solid #0366d6; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <div style="text-align: center; margin-top: 10px;">
+    <span style="background: #0366d6; color: white; padding: 8px 16px; border-radius: 4px; font-weight: bold;">▶️ Click to Play Video</span>
+  </div>
+</a>
 
 </div>
 
-> **Note:** GitHub doesn't support inline video playback in README files. Clicking the image will open the video in your browser's video player. For the best viewing experience, the video will stream directly in your browser.
+**Direct Video Player Link:** [Open Video Player](https://github.com/imcoza/ArticleForge-AI/blob/main/Article_forge_recording.mp4?raw=true)
+
+> **Note:** Clicking the image or link above will open the video in your browser's native video player where you can play it directly without downloading. The video streams from GitHub's servers.
 
 The recording demonstrates:
 
